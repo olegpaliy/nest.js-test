@@ -30,6 +30,16 @@
 
 ```bash
 $ npm install
+
+```
+
+## PostgresSQL
+
+```
+1) Make sure you have postgres installed on your local env
+2) cd prisma
+3) npx prisma migrate dev --name "init"
+
 ```
 
 ## Running the app
@@ -44,6 +54,10 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## API description
+
+use swagger to discover api abilities http://localhost:3000/swagger
 
 ## Test
 
