@@ -6,15 +6,24 @@ import {
   Put,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Article } from '@prisma/client';
 import { ArticleRepository } from './articleRepository.service';
 
 @Controller('/articles')
 export class AppController {
-  constructor(
-    private readonly articleRepository: ArticleRepository,
-  ) {}
+  private incorrectIdValueError;
+  constructor(private readonly articleRepository: ArticleRepository) {
+    this.incorrectIdValueError = new HttpException(
+      {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'parameter must be a number',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 
   @Get()
   async getAllArticle(): Promise<Article[]> {
@@ -30,6 +39,9 @@ export class AppController {
 
   @Get(':id')
   async getArticle(@Param('id') id: string): Promise<Article> {
+    if (Number.isNaN(+id)) {
+      throw this.incorrectIdValueError;
+    }
     const article = await this.articleRepository.getArticle(id);
     return article;
   }
@@ -39,6 +51,9 @@ export class AppController {
     @Param('id') id: string,
     @Body() articleData: Article,
   ): Promise<Article> {
+    if (Number.isNaN(+id)) {
+      throw this.incorrectIdValueError;
+    }
     const article = await this.articleRepository.update(
       { id: +id },
       articleData,
@@ -48,6 +63,9 @@ export class AppController {
 
   @Delete(':id')
   async deleteArticle(@Param('id') id: string): Promise<Article> {
+    if (Number.isNaN(+id)) {
+      throw this.incorrectIdValueError;
+    }
     const article = await this.articleRepository.delete({
       id: +id,
     });
